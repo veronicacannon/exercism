@@ -1,0 +1,30 @@
+require 'byebug'
+
+module RomanNumerals
+  TRANSLATOR = {
+    1000  => 'M',
+    900   => 'CM',
+    500   => 'D',
+    400   => 'CD',
+    100   => 'C',
+    90    => 'XC',
+    50    => 'L',
+    40    => 'XL',
+    10    => 'X',
+    9     => 'IX',
+    5     => 'V',
+    4     => 'IV',
+    1     => 'I'
+  }.freeze
+  def to_roman
+    target = self
+    TRANSLATOR.keys.inject('') do |roman_numerals, key|
+      quo, target = target.divmod(key)
+      roman_numerals << TRANSLATOR[key] * quo
+    end
+  end
+end
+
+class Integer
+  include RomanNumerals
+end
