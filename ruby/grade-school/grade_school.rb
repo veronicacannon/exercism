@@ -1,8 +1,6 @@
-# School student roster with grades
 class School
   def initialize
-    # Set default value of empty array when hash key is not present
-    @all_students = Hash.new { |h, k| h[k] = [] }
+    @all_students = Hash.new { |h, k| h[k] = [] } 
   end
 
   def add(name, grade)
@@ -14,7 +12,7 @@ class School
   end
 
   def students_by_grade
-    @all_students.sort.map do |grade, _|
+    @all_students.keys.sort.map do |grade|
       {
         grade: grade,
         students: students(grade)
