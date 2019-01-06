@@ -61,8 +61,47 @@ a.shuffle!(random: Random.new(1))  #=> [1, 3, 2]
 a = %w{ a b c d e f }
 a.values_at(1, 3, 5)
 
+days = ['mon', 'tues', 'wed', 'thur', 'fri']
+# Create an array of the elements with indexes 0 and 2. 
+# The return value should be ['mon', 'wed']
+days.values_at(0, 2)
+
+['a', 'b'] == ['b', 'a'] # returns false, arrays are always ordered 
+
+manly = ['batman', 'manbot', 'mace', 'tulip', 'nah man, nah']
+# Create an array of all elements in the manly array that contain the word "man". 
+# The return value should be: ["batman", "manbot", "nah man, nah"]
+manly.grep(/man/)
+manly.select { |who| who.include?("man") }
+
+players = [['r', 'kelly'], ['50', 'cent'], ['miley', 'cyrus']]
+# Use the players array to construct the following array: ["kelly", "cent", "cyrus"]
+players.map do |_, last_name| # _	indicates extraneous element
+  last_name
+end
+
+numbers = [1, 2, 3, 4]
+# Sum all the elements in the numbers array.
+numbers.inject(&:+)
+
+arr = ['onyx', 'wu tang', 'biggie']
+# Get the 'biggie' string from arr.
+arr[arr.find_index('biggie')]
+# .find_index	returns index of first element in array; returns nil if not found
+# !!! if not found, becomes nil and will error as arr[nil]
+
+t = [1,2,3].tap(&:pop)
+# .tap	returns the object (instead of the result of the method)
+# (&:pop)	proc of pop on array, returns 3
+# https://www.engineyard.com/blog/five-ruby-methods-you-should-be-using
+
+
+
+
+
 
 ### HASH =======================================================================
+# A hash is an ordered collection of key / value pairs. The keys in a hash cannot be duplicates and any Ruby object can be a key or a value.
 
 # hash is not simple sort
 sharks_hash = [
@@ -74,6 +113,12 @@ sharks_hash = [
 sharks_hash.sort{|a, b| a[:name] <=> b[:name]}
 sharks_hash.sort_by{|shark| shark[:name] }
 [1,2,3,4,1,5,3].uniq
+
+# Create the following array:
+# [1, 10, 100, 1_000, 10_000, 100_000, 1_000_000]
+7.times.map { |i| 10 ** i }
+
+
 
 ### RECURSION ==================================================================
 # https://www.khanacademy.org/computing/computer-science/algorithms#recursive-algorithms
@@ -101,9 +146,29 @@ def fibonacci(n)
   end
 end
 
+# alternative fibonocci
+fib = [0, 1]
+# Use fib to create the following array: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34] 
+# Notice that these are the first ten numbers in the Fibonocci sequence and 
+# each number equal the sum of the prior two numbers.
+
+while fib.length < 10
+  fib << fib[-2] + fib[-1]
+end
+
+in one line
+8.times.inject( [0, 1] ) { | fib | fib << fib.last(2).inject(:+) }
+
+
 def factorial(n)
   n == 0 ? 1 : n * factorial(n-1)
 end
+
+people = [["bob", 320], ["edgar", 152], ["maria", 125]]
+#Convert the people array to the following hash: 
+# {"bob" => 320, "edgar" => 152, "maria" => 125}
+Hash[people]
+
 
 
 ### HASH =======================================================================
@@ -260,3 +325,121 @@ end
 # check if number is prime
 require ‘prime’
 n.prime? => returns true or false
+
+===========================================================================
+
+x = Array.new()
+y = []
+x.eql?(y) 	returns true
+x.equal?(y)	returns false
+x.object_id	2042
+y.object_id	2044
+== – Checks if the value of two operands are equal (often overridden to provide a class-specific definition of equality).
+
+=== – Specifically used to test equality within the when clause of a case statement (also often overridden to provide meaningful class-specific semantics in case statements).
+
+eql? – Checks if the value and type of two operands are the same (as opposed to the == operator which compares values but ignores types). For example, 1 == 1.0 evaluates to true, whereas 1.eql?(1.0) evaluates to false.
+
+equal? – Compares the identity of two objects; i.e., returns true iff both operands have the same object id (i.e., if they both refer to the same object). Note that this will return false when comparing two identical copies of the same object.
+
+
+
+===========================================================================
+
+What is the sum of all the numbers between 0 and 100 that are divisible by both 3 and 5?
+
+(0..100).select { |number| number % 3 == 0 && number % 5 == 0 }.inject(&:+)
+
+
+=========================================================================== ===========================================================================
+What does the following code return? Explain.
+
+haha = {a: 1, b: 2}
+bozo = haha.merge!({lala: "word up"})
+haha.object_id == bozo.object_id
+ 
+The Hash#merge! method combines two hashes and mutates the original hash. Since the haha and bozo variables are assigned to the same object, they have the same object id. If the Hash#merge method was used (notice no !), then the original object would not have been mutated and the object ids would be different.
+
+
+
+===========================================================================
+videos = {yoga: "stretch it out"}
+Retrieve the value associated with the :dumb_and_dumber key in the videos hash. If the :dumb_and_dumber key is not available in the hash, return the string "no one's home".
+
+videos.fetch(:dumb_and_dumber, "no one's home")
+
+.fetch 	throws an error if key is not found, unless default is present
+videos[:dumb_and_dumber]	will return nil
+my_hash = Hash.new("cheese")	set default on hash, instead of fetch
+
+
+
+===========================================================================
+splat operator
+
+*	go("a","b","c")
+**	go(x: 100, y: 200)
+
+class Person
+  def initialize(args)
+    @first_name = args.fetch(:first_name)
+    @age = args.fetch(:age)
+  end
+end
+
+mohammed = Person.new({age: 12, first_name: "Mohammed"})
+
+
+
+===========================================================================
+
+Monkey patch the Hash class and define a method called all_values_even? that returns true if all the values in a Hash are even.
+
+class Hash
+  def all_values_even?
+    self.values.all?(&:even?)
+  end
+end
+
+{a: 2, b: 4, c: 6}.all_values_even? # returns true
+
+
+
+# ===========================================================================
+# nil&.some_method	returns nil
+
+# Ruby safe operator (doesn't throw an error)
+# try requires active support
+
+# instance variables that default to a value of nil
+
+===========================================================================
+
+# The ||= operator (pronounced "or-equal operator")
+
+===========================================================================
+create_person("David", "Black", "New Jersey")
+Three strings are serving as method arguments, and those strings are objects. But the argument list itself is not an object. 
+
+In addition to syntactic constructs like argument lists, Ruby also includes non-objects in the form of keywords like if, class, alias, and begin, end, rescue. 
+
+So not everything is Ruby is an object, and for good reason. But there’s a corollary to this point, and an important one: even though not everything is an object, everything does evaluate to an object.
+
+
+===========================================================================
+Identify the object, message, method, and receiver in the following example.
+
+x = 5.to_f
+
+5	object
+to_f	message
+to_f	method
+5	receiver
+
+"table".upcase()
+This example uses "dot notation" to send the upcase message to the "table" object. The "table" object is the receiver of the "upcase" message and invokes the upcase() method when it receives the "upcase" message.
+
+my_calculator.send(:add, 3, 4)
+Dot notation is a more common way to send messages (i..e my_calculator.add(3, 4)), but the send() method can also be used to send messages.
+
+
