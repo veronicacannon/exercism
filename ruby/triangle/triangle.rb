@@ -6,7 +6,7 @@ class Triangle
 
   def equilateral?
     return false if invalid_triangle?
-    @sides.all? { |element| element == @sides[0] }
+    @sides.uniq.length <= 1
   end
 
   def isosceles?
