@@ -1,8 +1,9 @@
-# are numbers Armstrong numbers
+# frozen-string_literal: true
+
+# determine whether a number is an Armstrong number
 class ArmstrongNumbers
   def self.include?(number)
-    digits = number.digits
-    length = digits.length
-    number == digits.sum { |digit| digit**length }
+    digits = number.to_s.chars.map(&:to_i)
+    number == digits.sum { |digit| digit.pow(digits.length) }
   end
 end
